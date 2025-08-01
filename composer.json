@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=7.3",
-        "directorytree/ldaprecord-laravel": "^2.11",
+        "directorytree/ldaprecord-laravel": "^3.4",
         "illuminate/support": "^8.0|^9.0|^10.0"
     }
 }
