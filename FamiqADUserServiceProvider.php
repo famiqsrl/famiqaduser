@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vendor\FamiqADUser;
+namespace Famiq\ActiveDirectoryUser;
 
 use Illuminate\Support\ServiceProvider;
 

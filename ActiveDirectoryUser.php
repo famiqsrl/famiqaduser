@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vendor\FamiqADUser;
+namespace Famiq\ActiveDirectoryUser;
 
 use LdapRecord\Models\ActiveDirectory\Group;
 use LdapRecord\Models\ActiveDirectory\User;

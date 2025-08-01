@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Vendor\FamiqADUser\Commands;
+namespace Famiq\ActiveDirectoryUser\Commands;
 
 use Illuminate\Console\Command;
-use App\Vendor\FamiqADUser\ActiveDirectoryUser;
+use Famiq\ActiveDirectoryUser\ActiveDirectoryUser;
 
 class GetUserInfoCommand extends Command
 {

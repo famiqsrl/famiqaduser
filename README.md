@@ -1,4 +1,4 @@
-# FamiqADUser Vendor
+# Famiq ActiveDirectoryUser Vendor
 
 This package exposes the `ActiveDirectoryUser` class with LDAP configuration
 required for Active Directory integration. The class mirrors the application's

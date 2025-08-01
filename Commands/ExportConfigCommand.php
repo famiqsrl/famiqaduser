@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vendor\FamiqADUser\Commands;
+namespace Famiq\ActiveDirectoryUser\Commands;
 
 use Illuminate\Console\Command;
 
