@@ -1,17 +1,24 @@
 <?php
+declare(strict_types=1);
 
 namespace Famiq\ActiveDirectoryUser\Commands;
 
 use Illuminate\Console\Command;
 use Famiq\ActiveDirectoryUser\ActiveDirectoryUser;
 
+/**
+ * Muestra información básica de un usuario de Active Directory.
+ */
 class GetUserInfoCommand extends Command
 {
     protected $signature = 'FamiqADUser:info {mail}';
 
     protected $description = 'Display information about an Active Directory user';
 
-    public function handle()
+    /**
+     * Ejecuta el comando de consulta.
+     */
+    public function handle(): int
     {
         $mail = $this->argument('mail');
         $user = ActiveDirectoryUser::findByMail($mail);

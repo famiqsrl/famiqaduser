@@ -1,16 +1,23 @@
 <?php
+declare(strict_types=1);
 
 namespace Famiq\ActiveDirectoryUser\Commands;
 
 use Illuminate\Console\Command;
 
+/**
+ * Comando para exportar el archivo de configuración LDAP del paquete.
+ */
 class ExportConfigCommand extends Command
 {
     protected $signature = 'FamiqADUser:export';
 
     protected $description = 'Export the FamiqADUser configuration file';
 
-    public function handle()
+    /**
+     * Ejecuta el proceso de exportación.
+     */
+    public function handle(): int
     {
         $source = __DIR__.'/../ldap.php';
         $destination = config_path('ldap.php');

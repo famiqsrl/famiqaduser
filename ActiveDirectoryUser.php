@@ -1,37 +1,54 @@
 <?php
+declare(strict_types=1);
 
 namespace Famiq\ActiveDirectoryUser;
 
 use LdapRecord\Models\ActiveDirectory\Group;
 use LdapRecord\Models\ActiveDirectory\User;
+use LdapRecord\Models\Collection;
 
 class ActiveDirectoryUser extends User
 {
     const MAX_ITERATIONS = 8;
 
-    public function belongsToGroup($group = "")
+    /**
+     * Verifica si el usuario pertenece a un grupo específico.
+     */
+    public function belongsToGroup(string $group = ""): bool
     {
         return $this->hasMany(Group::class, 'member')
             ->where('cn', $group)
             ->exists();
     }
 
-    public function isAreaManager()
+    /**
+     * Determina si el usuario es líder de área.
+     */
+    public function isAreaManager(): bool
     {
         return $this->belongsToGroup("Lider Famiq 1");
     }
 
-    public function isGeneralManager()
+    /**
+     * Comprueba si el usuario es el gerente general.
+     */
+    public function isGeneralManager(): bool
     {
         return $this->getMail() == env('GeneralManager', '');
     }
 
-    public function getGeneralManager()
+    /**
+     * Obtiene el usuario configurado como gerente general.
+     */
+    public function getGeneralManager(): ?self
     {
         return self::where('mail', env('GeneralManager', ''))->first();
     }
 
-    public function getAreaManager()
+    /**
+     * Obtiene el gerente de área asociado al usuario.
+     */
+    public function getAreaManager(): ?self
     {
         if (env('AreaManager', null)) {
             return self::where('mail', env('AreaManager'))->first();
@@ -54,12 +71,18 @@ class ActiveDirectoryUser extends User
         return $user;
     }
 
-    public function getEmployeeId()
+    /**
+     * Devuelve el identificador de empleado.
+     */
+    public function getEmployeeId(): ?string
     {
         return $this['employeeid'][0] ?? null;
     }
 
-    public function getDirectReports()
+    /**
+     * Obtiene los usuarios que dependen directamente de este usuario.
+     */
+    public function getDirectReports(): array
     {
         $users = [];
 
@@ -72,32 +95,50 @@ class ActiveDirectoryUser extends User
         return $users;
     }
 
-    public function getDirectReportsWhitUser()
+    /**
+     * Obtiene los reportes directos incluyendo al usuario actual.
+     */
+    public function getDirectReportsWhitUser(): array
     {
         return array_merge([$this], $this->getDirectReports());
     }
 
-    public function getGroups()
+    /**
+     * Devuelve los grupos a los que pertenece el usuario.
+     */
+    public function getGroups(): Collection
     {
         return $this->hasMany(Group::class, 'member')->with($this->primaryGroup())->get();
     }
 
-    public function getCommonName()
+    /**
+     * Obtiene el nombre común del usuario.
+     */
+    public function getCommonName(): ?string
     {
         return $this['cn'][0] ?? null;
     }
 
-    public function getPuesto()
+    /**
+     * Devuelve el puesto del usuario.
+     */
+    public function getPuesto(): string
     {
         return $this->title[0] ?? '*A definir';
     }
 
-    public function getDepartamento()
+    /**
+     * Devuelve el departamento al que pertenece el usuario.
+     */
+    public function getDepartamento(): string
     {
         return $this->department[0] ?? '*A definir';
     }
 
-    public function getManager($excludeGeneralManager = true)
+    /**
+     * Obtiene el manager inmediato del usuario.
+     */
+    public function getManager(bool $excludeGeneralManager = true): ?self
     {
         $manager = $this->manager()->first();
         if ($excludeGeneralManager && $manager && $manager->isGeneralManager()) {
@@ -107,42 +148,66 @@ class ActiveDirectoryUser extends User
         return $manager;
     }
 
-    public function getSAMAccountName()
+    /**
+     * Devuelve el SAM Account Name del usuario.
+     */
+    public function getSAMAccountName(): ?string
     {
         return $this['samaccountname'][0] ?? null;
     }
 
-    public function getSector()
+    /**
+     * Obtiene el sector del usuario.
+     */
+    public function getSector(): string
     {
         return $this->extensionattribute2[0] ?? '*A definir';
     }
 
-    static function findById($value)
+    /**
+     * Busca un usuario por su identificador interno.
+     */
+    public static function findById(string $value): ?self
     {
         return self::where('msds-externaldirectoryobjectid', "=", "User_" . $value)->first();
     }
 
-    static function findByCn($value)
+    /**
+     * Busca un usuario por su CN.
+     */
+    public static function findByCn(string $value): ?self
     {
         return self::where('cn', "=", "User_" . $value)->first();
     }
 
-    static function findBySAMAccountName($value)
+    /**
+     * Busca un usuario por su SAM Account Name.
+     */
+    public static function findBySAMAccountName(string $value): ?self
     {
         return self::where('samaccountname', $value)->first();
     }
 
-    static function findByMail($value)
+    /**
+     * Busca un usuario por su correo electrónico.
+     */
+    public static function findByMail(string $value): ?self
     {
         return self::where('mail', $value)->first();
     }
 
-    static function getHRManager()
+    /**
+     * Obtiene el usuario configurado como gerente de Recursos Humanos.
+     */
+    public static function getHRManager(): ?self
     {
         return self::where('mail', env('HRManager', ''))->first();
     }
 
-    public function getFirstApprover()
+    /**
+     * Devuelve el primer aprobador para procesos internos.
+     */
+    public function getFirstApprover(): ?self
     {
         $user = $this->getManager();
 
@@ -158,12 +223,18 @@ class ActiveDirectoryUser extends User
         return $user;
     }
 
-    public function getMail()
+    /**
+     * Obtiene el correo electrónico del usuario.
+     */
+    public function getMail(): ?string
     {
         return $this->mail ? $this->mail[0] : null;
     }
 
-    public function getSecondApprover()
+    /**
+     * Devuelve el segundo aprobador para procesos internos.
+     */
+    public function getSecondApprover(): ?self
     {
         $firstApprover = $this->getFirstApprover();
 
@@ -188,17 +259,26 @@ class ActiveDirectoryUser extends User
         }
     }
 
-    public function getPhoneNumber()
+    /**
+     * Obtiene el número telefónico del usuario.
+     */
+    public function getPhoneNumber(): ?string
     {
         return $this->telephonenumber[0] ?? null;
     }
 
-    public function getMobileNumber()
+    /**
+     * Obtiene el número móvil del usuario.
+     */
+    public function getMobileNumber(): ?string
     {
         return $this->mobile[0] ?? null;
     }
 
-    public function getHierarchy()
+    /**
+     * Devuelve la jerarquía de managers hasta el gerente general.
+     */
+    public function getHierarchy(): array
     {
         $hierarchy = [];
         $user = $this->getManager(false);
@@ -213,12 +293,18 @@ class ActiveDirectoryUser extends User
         return $hierarchy;
     }
 
-    public static function findByDepartment($department)
+    /**
+     * Busca usuarios por departamento.
+     */
+    public static function findByDepartment(string $department): Collection
     {
         return self::where('department', $department)->get();
     }
 
-    public static function searchBy($attribute, $value)
+    /**
+     * Realiza una búsqueda genérica de usuarios.
+     */
+    public static function searchBy(string $attribute, string $value): Collection
     {
         return self::where($attribute, 'contains', $value)->get();
     }
