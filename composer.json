@@ -1,0 +1,23 @@
+{
+    "name": "famiq/ad-user",
+    "description": "Famiq Active Directory User integration package",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Famiq\\ActiveDirectoryUser\\": ""
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Famiq\\ActiveDirectoryUser\\FamiqADUserServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": ">=7.3",
+        "directorytree/ldaprecord-laravel": "^3.4",
+        "illuminate/support": "^8.0|^9.0|^10.0"
+    }
+}
